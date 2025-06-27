@@ -28,13 +28,13 @@ function showRandomQuote() {
 
   // If no quotes in selected category
   if (filtered.length === 0) {
-    quoteDisplay.textContent = "No quotes available.";
+    quoteDisplay.innerHTML = "No quotes available.";
     return;
   }
 
   // Pick and show a random quote
   const randomQuote = filtered[Math.floor(Math.random() * filtered.length)];
-  quoteDisplay.textContent = randomQuote.text;
+  quoteDisplay.innerHTML = randomQuote.text;
 }
 
 // Function to add a new quote
