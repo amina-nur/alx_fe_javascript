@@ -143,7 +143,7 @@ async function syncToServer(newQuote) {
   }
 }
 
-// ======= Manual Sync: Fetch and Merge Server Quotes =======
+// Main sync logic (used both manually and in background)
 async function syncQuotes() {
   try {
     const response = await fetch('https://jsonplaceholder.typicode.com/posts');
@@ -156,8 +156,6 @@ async function syncQuotes() {
 
     const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
 
-    let addedCount = 0;
-
     serverQuotes.forEach(serverQuote => {
       const exists = localQuotes.some(local =>
         local.text === serverQuote.text &&
@@ -165,33 +163,30 @@ async function syncQuotes() {
       );
       if (!exists) {
         localQuotes.push(serverQuote);
-        addedCount++;
+        console.log("Synced quote from server:", serverQuote.text);
       }
     });
 
-    if (addedCount > 0) {
-      localStorage.setItem("quotes", JSON.stringify(localQuotes));
-      quotes = localQuotes;
-      populateCategories();
-      alert(`${addedCount} new quotes synced from server.`);
-    } else {
-      alert("No new quotes found on server.");
-    }
-
+    localStorage.setItem("quotes", JSON.stringify(localQuotes));
+    quotes = localQuotes;
+    populateCategories();
   } catch (error) {
-    console.error("Sync failed:", error);
-    alert("Failed to sync with server.");
+    console.error("Sync error:", error);
   }
 }
 
+//Fetch and merge new quotes from mock server
+function fetchQuotesFromServer() {
+  syncQuotes();
+}
 
 //Periodic sync from server 
-setInterval(syncQuotes, 30000);// every 30s
+setInterval(fetchQuotesFromServer, 30000); // every 30s
 
 //Initial Setup
 populateCategories();
 filterQuotes(); // show initial quote
-syncQuotes();
+fetchQuotesFromServer(); // get server updates
 
 // Event Listeners
 newQuoteBtn.addEventListener("click", showRandomQuote);
