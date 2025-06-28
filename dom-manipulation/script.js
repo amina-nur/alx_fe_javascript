@@ -170,6 +170,8 @@ async function syncQuotes() {
     localStorage.setItem("quotes", JSON.stringify(localQuotes));
     quotes = localQuotes;
     populateCategories();
+
+    console.log("Quotes synced with server!");
   } catch (error) {
     console.error("Sync error:", error);
   }
