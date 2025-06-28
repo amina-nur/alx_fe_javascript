@@ -215,6 +215,40 @@ function fetchFromServer() {
     }
   }, 1000);
 }
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+    const data = await response.json();
+
+    // Simulate converting fetched posts into quotes
+    const serverQuotes = data.slice(0, 5).map(post => ({
+      text: post.title,
+      category: 'Server'
+    }));
+
+    const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+
+    // Merge without duplicates
+    serverQuotes.forEach(serverQuote => {
+      const exists = localQuotes.some(local =>
+        local.text === serverQuote.text &&
+        local.category === serverQuote.category
+      );
+      if (!exists) {
+        localQuotes.push(serverQuote);
+      }
+    });
+
+    // Update local storage and UI
+    localStorage.setItem("quotes", JSON.stringify(localQuotes));
+    populateCategories();
+
+    console.log("Quotes synced from server.");
+  } catch (error) {
+    console.error("Failed to fetch quotes from server:", error);
+  }
+}
+
 // Periodic server sync
 setInterval(fetchFromServer, 30000); 
 setInterval(fetchQuotesFromServer, 10000); // every 10 seconds
@@ -227,4 +261,5 @@ exportBtn.addEventListener("click", exportQuotes);
 importInput.addEventListener("change", importFromJsonFile);
 populateCategories();
 filterQuotes(); // auto-show a quote from the selected filter
+fetchQuotesFromServer();
 
