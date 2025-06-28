@@ -45,6 +45,30 @@ function showRandomQuote() {
   quoteDisplay.innerHTML = randomQuote.text;
   sessionStorage.setItem("lastQuote", randomQuote.text);
 }
+function createAddQuoteForm() {
+  const form = document.createElement("div");
+
+  const quoteInput = document.createElement("input");
+  quoteInput.type = "text";
+  quoteInput.id = "newQuoteText";
+  quoteInput.placeholder = "Enter quote";
+
+  const categoryInput = document.createElement("input");
+  categoryInput.type = "text";
+  categoryInput.id = "newQuoteCategory";
+  categoryInput.placeholder = "Enter category";
+
+  const addButton = document.createElement("button");
+  addButton.id = "addQuoteBtn";
+  addButton.textContent = "Add Quote";
+  addButton.addEventListener("click", addQuote);
+
+  form.appendChild(quoteInput);
+  form.appendChild(categoryInput);
+  form.appendChild(addButton);
+
+  document.body.appendChild(form);
+}
 
 // Add new quote and sync to server
 function addQuote() {
@@ -189,6 +213,7 @@ setInterval(fetchQuotesFromServer, 30000); // every 30s
 populateCategories();
 filterQuotes(); // show initial quote
 fetchQuotesFromServer(); // get server updates
+createAddQuoteForm();
 
 // Event Listeners
 newQuoteBtn.addEventListener("click", showRandomQuote);
