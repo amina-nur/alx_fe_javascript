@@ -169,6 +169,35 @@ function syncToServer(newQuote) {
     console.log("Synced to server:", newQuote);
   }, 500);
 }
+// Simulate fetching data from a server
+function fetchQuotesFromServer() {
+  // Simulate server data using JSONPlaceholder-like data
+  const simulatedServerQuotes = [
+    { text: "Do or do not. There is no try.", category: "Motivation" },
+    { text: "Not all those who wander are lost.", category: "Adventure" },
+  ];
+
+  // Get current local quotes
+  const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+
+  // Conflict resolution: if a server quote isn't already in local, add it
+  simulatedServerQuotes.forEach(serverQuote => {
+    const exists = localQuotes.some(local =>
+      local.text === serverQuote.text &&
+      local.category === serverQuote.category
+    );
+    if (!exists) {
+      localQuotes.push(serverQuote);
+      console.log("Synced new quote from server:", serverQuote.text);
+    }
+  });
+
+  // Save merged list to localStorage
+  localStorage.setItem("quotes", JSON.stringify(localQuotes));
+
+  // Refresh categories if any were new
+  populateCategories();
+}
 
 // Simulate fetching updates from server
 function fetchFromServer() {
@@ -188,6 +217,7 @@ function fetchFromServer() {
 }
 // Periodic server sync
 setInterval(fetchFromServer, 30000); 
+setInterval(fetchQuotesFromServer, 10000); // every 10 seconds
 
 // Event Listeners
 newQuoteBtn.addEventListener("click", showRandomQuote);
