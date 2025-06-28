@@ -63,6 +63,22 @@ function addQuote() {
   alert("Quote added!");
 }
 
+function populateCategories() {
+  const categories = new Set(quotes.map(q => q.category));
+  categoryFilter.innerHTML = '<option value="all">All</option>';
+  categories.forEach(category => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    categoryFilter.appendChild(option);
+  });
+
+  // Restore last selected category
+  const saved = localStorage.getItem("selectedCategory");
+  if (saved) categoryFilter.value = saved;
+}
+
+
 // Create form
 function createAddQuoteForm() {
   const form = document.createElement("div");

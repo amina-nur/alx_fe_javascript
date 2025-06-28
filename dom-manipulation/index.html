@@ -9,9 +9,11 @@
   <h1>Dynamic Quote Generator</h1>
 
   <!-- Dropdown to filter quotes by category -->
-  <select id="categoryFilter">
-    <option value="all">All</option>
-  </select>
+  <h3>Filter by Category</h3>
+<select id="categoryFilter" onchange="filterQuotes()">
+  <option value="all">All</option>
+</select>
+
 
   <!-- Area to display the quote -->
   <div id="quoteDisplay" style="margin: 20px 0; font-style: italic;"></div>
