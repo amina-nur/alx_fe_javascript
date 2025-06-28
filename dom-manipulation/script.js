@@ -1,13 +1,23 @@
-// Initial list of quotes or load from localStorage
-let quotes = JSON.parse(localStorage.getItem("quotes")) || [
+// Dynamic Quote Generator with Web Storage, Filtering, and Simulated Server Sync 
+
+// Simulated Server Data
+let mockServerQuotes = [
   { text: "Be yourself; everyone else is already taken.", category: "Inspiration" },
-  { text: "This too shall pass.", category: "Life" },
+  { text: "This too shall pass.", category: "Life" }
 ];
 
-// Get references to HTML elements
+// Local quotes array
+let quotes = JSON.parse(localStorage.getItem("quotes")) || [...mockServerQuotes];
+
+// DOM Elements
 const quoteDisplay = document.getElementById("quoteDisplay");
 const newQuoteBtn = document.getElementById("newQuote");
+const addQuoteBtn = document.getElementById("addQuoteBtn");
 const categoryFilter = document.getElementById("categoryFilter");
+const newQuoteText = document.getElementById("newQuoteText");
+const newQuoteCategory = document.getElementById("newQuoteCategory");
+const exportBtn = document.getElementById("exportBtn");
+const importInput = document.getElementById("importFile");
 
 // Session Storage: last viewed quote
 if (sessionStorage.getItem("lastQuote")) {
@@ -67,6 +77,7 @@ function filterQuotes() {
   showRandomQuote();
   localStorage.setItem("lastSelectedCategory", categoryFilter.value);
 }
+// Populate categories in filter
 function populateCategories() {
   const categories = new Set(quotes.map(q => q.category));
   categoryFilter.innerHTML = '<option value="all">All</option>';
@@ -151,10 +162,39 @@ function importFromJsonFile(event) {
   };
   fileReader.readAsText(event.target.files[0]);
 }
+// Simulate syncing to server
+function syncToServer(newQuote) {
+  setTimeout(() => {
+    mockServerQuotes.push(newQuote);
+    console.log("Synced to server:", newQuote);
+  }, 500);
+}
 
+// Simulate fetching updates from server
+function fetchFromServer() {
+  setTimeout(() => {
+    const local = JSON.parse(localStorage.getItem("quotes")) || [];
+    const newOnes = mockServerQuotes.filter(sq =>
+      !local.some(lq => lq.text === sq.text && lq.category === sq.category)
+    );
+    if (newOnes.length > 0) {
+      const merged = [...local, ...newOnes];
+      localStorage.setItem("quotes", JSON.stringify(merged));
+      quotes = merged;
+      alert("New quotes synced from the server.");
+      populateCategories();
+    }
+  }, 1000);
+}
+// Periodic server sync
+setInterval(fetchFromServer, 30000); 
 
+// Event Listeners
 newQuoteBtn.addEventListener("click", showRandomQuote);
-createAddQuoteForm();
+addQuoteBtn.addEventListener("click", addQuote);
+categoryFilter.addEventListener("change", filterQuotes);
+exportBtn.addEventListener("click", exportQuotes);
+importInput.addEventListener("change", importFromJsonFile);
 populateCategories();
 filterQuotes(); // auto-show a quote from the selected filter
 
