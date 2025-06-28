@@ -62,7 +62,11 @@ function addQuote() {
 
   alert("Quote added!");
 }
-
+// Filter quotes and save selected category
+function filterQuotes() {
+  showRandomQuote();
+  localStorage.setItem("lastSelectedCategory", categoryFilter.value);
+}
 function populateCategories() {
   const categories = new Set(quotes.map(q => q.category));
   categoryFilter.innerHTML = '<option value="all">All</option>';
@@ -151,3 +155,6 @@ function importFromJsonFile(event) {
 
 newQuoteBtn.addEventListener("click", showRandomQuote);
 createAddQuoteForm();
+populateCategories();
+filterQuotes(); // auto-show a quote from the selected filter
+
